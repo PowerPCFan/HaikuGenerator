@@ -8,11 +8,18 @@ GREEN = ANSI + "32m"
 RESET = ANSI + "0m"
 
 def make_proper_sentence(text: str) -> str:
+    text = text.strip()  # strip string
     text = text[0].upper() + text[1:]  # Capitalize the first letter
-    
-    if not text.endswith('.'):
-        text += '.'  # Add period to the end if there isn't already one
-    
+    text = text.replace('  ', ' ')  # Replace double spaces with single spaces
+    text = text.replace('\n', ' ')  # Replace newlines with spaces
+    text += '.' if not text.endswith('.') else ''  # Add period to the end if there isn't already one
+    text = text.replace(' .', '.')  # Remove space before period
+    text = text.replace(' ,', ',')  # Remove space before comma
+    text = text.replace(' ;', ';')  # Remove space before semicolon
+    text = text.replace(' !', '!')  # Remove space before exclamation mark
+    text = text.replace(' ?', '?')  # Remove space before question mark
+    text = text.replace(' :', ':')  # Remove space before colon
+
     return text  # Return proper sentence
 
 
