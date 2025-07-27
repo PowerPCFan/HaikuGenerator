@@ -7,6 +7,15 @@ ANSI = "\033["
 GREEN = ANSI + "32m"
 RESET = ANSI + "0m"
 
+def make_proper_sentence(text: str) -> str:
+    text = text[0].upper() + text[1:]  # Capitalize the first letter
+    
+    if not text.endswith('.'):
+        text += '.'  # Add period to the end if there isn't already one
+    
+    return text  # Return proper sentence
+
+
 def print_with_border(lines: list[str]) -> None:
     lines = [line.strip() for line in lines]
     
@@ -34,12 +43,12 @@ def generate_line(syllable_count):
             words.pop()
         line_candidate = " ".join(words)
         if syllables.get_line_syllables(line_candidate) == syllable_count:
-            return line_candidate
+            return make_proper_sentence(line_candidate)
     return "Error generating this line."
     
 if __name__ == "__main__":
-    line1 = f"{generate_line(syllable_count=5)}."
-    line2 = f"{generate_line(syllable_count=7)}."
-    line3 = f"{generate_line(syllable_count=5)}."
+    line1 = generate_line(syllable_count=5)
+    line2 = generate_line(syllable_count=7)
+    line3 = generate_line(syllable_count=5)
 
     print_with_border([line1, line2, line3])
