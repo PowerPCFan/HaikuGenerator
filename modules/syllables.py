@@ -1,11 +1,11 @@
 import re as regexp
 import collections
 import cmudict
-from typing import IO
+from typing import IO, Any
 
-pronunciations: list | None = None
-lookup: collections.defaultdict | None = None
-rhyme_lookup: collections.defaultdict | None = None
+pronunciations: list[Any] | None = None
+lookup: collections.defaultdict[str, list[str]] | None = None
+rhyme_lookup: collections.defaultdict[str, list[str]] | None = None
 
 # the following 3 functions were taken from the `pronouncing` module and modified to work in this script
 # i also added type hinting
@@ -21,13 +21,13 @@ def _pcmu(cmufh: IO[bytes]) -> list:
     return pronunciations
 
 def _rhp(phones: str) -> str:
-    phones_list = phones.split()
+    phones_list: list[str] = phones.split()
     for i in range(len(phones_list) - 1, 0, -1):
         if phones_list[i][-1] in '12':
             return ' '.join(phones_list[i:])
     return phones
 
-def _init_cmu(filehandle: IO[bytes] | None = None):
+def _init_cmu(filehandle: IO[bytes] | None = None) -> None:
     global pronunciations, lookup, rhyme_lookup
     if pronunciations is None:
         if filehandle is None:
@@ -39,7 +39,7 @@ def _init_cmu(filehandle: IO[bytes] | None = None):
             lookup[word].append(phones)
         rhyme_lookup = collections.defaultdict(list)
         for word, phones in pronunciations:
-            rp = _rhp(phones)
+            rp: str = _rhp(phones)
             if rp is not None:
                 rhyme_lookup[rp].append(word)
 
@@ -51,7 +51,7 @@ def phones_for_word(find: str) -> list:
     return lookup.get(find.lower(), [])
 
 def get_syllables(word: str) -> int:
-    phones = phones_for_word(word.lower())
+    phones: list[str] = phones_for_word(word.lower())
     if phones:
         return len(regexp.sub(r"[^012]", "", phones[0]))
     return len(regexp.findall(r'[aeiouy]+', word.lower())) # fallback

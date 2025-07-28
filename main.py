@@ -1,11 +1,13 @@
 import modules.markov_loader as markov_loader
 import modules.syllables as syllables
+from markovify import NewlineText
 
-MARKOV_MODEL = markov_loader.get_markov_model()
+MARKOV_MODEL: NewlineText = markov_loader.get_markov_model()
 
-ANSI = "\033["
-GREEN = ANSI + "32m"
-RESET = ANSI + "0m"
+ANSI: str = "\033["
+GREEN: str = ANSI + "32m"
+RED: str = ANSI + "31m"
+RESET: str = ANSI + "0m"
 
 def make_proper_sentence(text: str) -> str:
     text = text.strip()  # strip string
@@ -30,9 +32,9 @@ def print_with_border(lines: list[str]) -> None:
         return
 
     leftspacing: str = " " * 5
-    max_len = max(len(line) for line in lines)
-    bt = leftspacing + "╔" + "═" * (max_len + 2) + "╗"
-    bb = leftspacing + "╚" + "═" * (max_len + 2) + "╝"
+    max_len: int = max(len(line) for line in lines)
+    bt: str = leftspacing + "╔" + "═" * (max_len + 2) + "╗"
+    bb: str = leftspacing + "╚" + "═" * (max_len + 2) + "╝"
 
     print(f"\n\n{leftspacing}{GREEN}{'  Your haiku is ready!'.center(max_len)}{RESET}")
     print(bt)
@@ -40,22 +42,26 @@ def print_with_border(lines: list[str]) -> None:
         print(f"{leftspacing}║ {line.center(max_len)} ║")
     print(bb + "\n\n")
 
-def generate_line(syllable_count):
+def generate_line(syllable_count: int) -> str:
     for i in range(100):
-        sentence = MARKOV_MODEL.make_sentence(max_words=syllable_count*3)
+        sentence: str | None = MARKOV_MODEL.make_sentence(max_words=syllable_count*3)
         if not sentence:
             continue
-        words = sentence.split()
+        words: list[str] = sentence.split()
         while words and syllables.get_line_syllables(" ".join(words)) > syllable_count:
             words.pop()
-        line_candidate = " ".join(words)
+        line_candidate: str = " ".join(words)
         if syllables.get_line_syllables(line_candidate) == syllable_count:
             return make_proper_sentence(line_candidate)
     return "Error generating this line."
     
 if __name__ == "__main__":
-    line1 = generate_line(syllable_count=5)
-    line2 = generate_line(syllable_count=7)
-    line3 = generate_line(syllable_count=5)
+    try:
+        line1: str = generate_line(syllable_count=5)
+        line2: str = generate_line(syllable_count=7)
+        line3: str = generate_line(syllable_count=5)
 
-    print_with_border([line1, line2, line3])
+        print_with_border([line1, line2, line3])
+    except Exception as error:
+        print(f"{RED}Error: An unexpected error occurred:{RESET}")
+        print(f"{error}")
