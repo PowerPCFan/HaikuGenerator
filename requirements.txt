@@ -1,6 +1,2 @@
-cmudict==1.1.1
-importlib_metadata==8.7.0
-importlib_resources==6.5.2
-markovify==0.9.4
-Unidecode==1.4.0
-zipp==3.23.0
+cmudict
+markovify
