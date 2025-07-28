@@ -1,4 +1,5 @@
 from textblob import Word
+import re as regexp
 
 contraction_map = {
     "im": "I'm",
@@ -22,9 +23,21 @@ contraction_map = {
     "i": "I"
 }
 
+# def fix_contractions(text: str) -> str:
+#     words = text.split()
+#     fixed_words: list[str] = [w for w in [contraction_map.get(ww.lower(), ww) for ww in words] if w is not None]
+#     return ' '.join(fixed_words)
+
 def fix_contractions(text: str) -> str:
+    # Handle multi-word contractions with regex
+    for key, value in contraction_map.items():
+        if ' ' in key:  # Only process multi-word keys
+            # Use regex to match the exact phrase with word boundaries
+            text = regexp.sub(rf'\b{regexp.escape(key)}\b', value, text, flags=regexp.IGNORECASE)
+
+    # Handle single-word contractions
     words = text.split()
-    fixed_words: list[str] = [w for w in [contraction_map.get(ww.lower(), ww) for ww in words] if w is not None]
+    fixed_words: list[str] = [contraction_map.get(ww.lower(), ww) for ww in words]
     return ' '.join(fixed_words)
 
 def correct(text: str) -> str:
