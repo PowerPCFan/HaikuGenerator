@@ -7,9 +7,6 @@ pronunciations: list[Any] | None = None
 lookup: collections.defaultdict[str, list[str]] | None = None
 rhyme_lookup: collections.defaultdict[str, list[str]] | None = None
 
-# the following 3 functions were taken from the `pronouncing` module and modified to work in this script
-# i also added type hinting
-
 def _pcmu(cmufh: IO[bytes]) -> list:
     pronunciations = list()
     for line in cmufh:

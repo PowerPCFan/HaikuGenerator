@@ -1,2 +1,3 @@
 cmudict
 markovify
+textblob
