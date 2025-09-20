@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 CONFIG_JSON = "config.json"
 
+
 @dataclass
 class Config:
     spell_check: bool

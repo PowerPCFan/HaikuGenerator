@@ -20,8 +20,10 @@ contraction_map = {
     "let s": "let's",
     "its": "it's",
     "it s": "it's",
-    "i": "I"
+    "i": "I",
+    "it ll": "it'll",
 }
+
 
 # def fix_contractions(text: str) -> str:
 #     words = text.split()
@@ -40,5 +42,6 @@ def fix_contractions(text: str) -> str:
     fixed_words: list[str] = [contraction_map.get(ww.lower(), ww) for ww in words]
     return ' '.join(fixed_words)
 
+
 def correct(text: str) -> str:
-    return fix_contractions(Word(text).correct())
+    return fix_contractions(Word(text).correct())  # this is reeeeeally slow (the textblob word thing)
