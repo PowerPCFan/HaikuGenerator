@@ -5,16 +5,17 @@ import pickle as pkl
 import pathlib
 
 MODEL_FILE = "model.pkl"
+SENTENCES_FILE = "sentences.json"
 
 
 def save_markov_model(model: markovify.NewlineText) -> None:
-    with open(MODEL_FILE, "wb") as f:
-        pkl.dump(model, f)
+    with open(MODEL_FILE, "wb") as file:
+        pkl.dump(model, file)
 
 
 def load_markov_model() -> markovify.NewlineText:
-    with open(MODEL_FILE, "rb") as f:
-        markov_model = pkl.load(f)
+    with open(MODEL_FILE, "rb") as file:
+        markov_model = pkl.load(file)
         return markov_model
 
 
@@ -33,7 +34,7 @@ def delete_markov_model() -> bool:
 
 
 def create_and_save_markov_model() -> None:
-    with open(file='sentences.json', mode='r', encoding='utf-8') as file:
+    with open(file=SENTENCES_FILE, mode='r', encoding='utf-8') as file:
         SENTENCES = json.load(file)
         MARKOV_MODEL = markovify.NewlineText("\n".join(SENTENCES))
         save_markov_model(MARKOV_MODEL)
