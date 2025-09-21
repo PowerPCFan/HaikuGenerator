@@ -10,6 +10,7 @@ contraction_map = {
     "dont": "don't",
     "don t": "don't",
     "doesn t": "doesn't",
+    "doesnt": "doesn't",
     "it not": "it's not",
     "isnt": "isn't",
     "isn t": "isn't",
@@ -44,6 +45,9 @@ contraction_map = {
     "shouldn t": "shouldn't",
     "you ll": "you'll",
     "youll": "you'll",
+    "idk": "I don't know",
+    "kinda": "sort of",
+    "idc": "I don't care",
 }
 
 

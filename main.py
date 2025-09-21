@@ -93,6 +93,7 @@ if __name__ == "__main__":
                         haiku_content = "\n".join(line.center(max_length) for line in lines)
 
                         console.clear()
+                        console.print()  # newline
                         console.print(Panel(
                             haiku_content,
                             title="Your Haiku is Ready!",
