@@ -1,6 +1,8 @@
 # my stuff
 sentences.json
 model.pkl
+markov_model.pkl
+config.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

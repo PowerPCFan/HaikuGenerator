@@ -1,3 +1,4 @@
 cmudict
 markovify
 textblob
+rich

@@ -1,5 +1,6 @@
 from textblob import Word
 import re as regexp
+from modules.global_vars import config
 
 contraction_map = {
     "im": "I'm",
@@ -8,6 +9,10 @@ contraction_map = {
     "you re": "you're",
     "dont": "don't",
     "don t": "don't",
+    "doesn t": "doesn't",
+    "it not": "it's not",
+    "isnt": "isn't",
+    "isn t": "isn't",
     "cant": "can't",
     "can t": "can't",
     "wont": "won't",
@@ -22,20 +27,35 @@ contraction_map = {
     "it s": "it's",
     "i": "I",
     "it ll": "it'll",
+    "wanna": "want to",
+    "wan na": "want to",
+    "u": "you",
+    "ur": "your",
+    "ca": "can't",
+    "wo": "won't",
+    "wheres": "where's",
+    "where s": "where's",
+    "whos": "who's",
+    "cos": "because",
+    "youd": "you'd",
+    "gotta": "have to",
+    "got ta": "have to",
+    "shouldnt": "shouldn't",
+    "shouldn t": "shouldn't",
+    "you ll": "you'll",
+    "youll": "you'll",
 }
 
 
-# def fix_contractions(text: str) -> str:
-#     words = text.split()
-#     fixed_words: list[str] = [w for w in [contraction_map.get(ww.lower(), ww) for ww in words] if w is not None]
-#     return ' '.join(fixed_words)
-
 def fix_contractions(text: str) -> str:
-    # Handle multi-word contractions with regex
     for key, value in contraction_map.items():
-        if ' ' in key:  # Only process multi-word keys
-            # Use regex to match the exact phrase with word boundaries
-            text = regexp.sub(rf'\b{regexp.escape(key)}\b', value, text, flags=regexp.IGNORECASE)
+        if ' ' in key:
+            text = regexp.sub(
+                pattern=rf'\b{regexp.escape(key)}\b',
+                repl=value,
+                string=text,
+                flags=regexp.IGNORECASE
+            )
 
     # Handle single-word contractions
     words = text.split()
@@ -44,4 +64,7 @@ def fix_contractions(text: str) -> str:
 
 
 def correct(text: str) -> str:
-    return fix_contractions(Word(text).correct())  # this is reeeeeally slow (the textblob word thing)
+    if config.advanced_spell_check:
+        return fix_contractions(Word(text).correct())
+    else:
+        return fix_contractions(text)

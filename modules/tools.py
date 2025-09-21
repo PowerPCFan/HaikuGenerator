@@ -2,10 +2,25 @@
 import modules.markov_loader as markov_loader
 import modules.syllables as syllables
 import modules.correct_typos as correct_typos
-from modules.colors.ansi_codes import RESET, GREEN, PURPLE
 from modules.global_vars import config
+from typing import Any
 
 MARKOV_MODEL = markov_loader.get_markov_model()
+
+
+def get_user_friendly_type(value: Any) -> str:
+    value_type = type(value).__name__
+
+    mapping = {
+        "str": "string",
+        "int": "integer",
+        "float": "floating-point number",
+        "bool": "boolean",
+        "list": "list",
+        "dict": "dictionary"
+    }
+
+    return mapping.get(value_type, value_type)
 
 
 def regenerate_markov_model() -> None:
@@ -16,24 +31,32 @@ def regenerate_markov_model() -> None:
 
 
 def generate_line(syllable_count: int) -> str:
-    for i in range(100):
+    for _ in range(config.max_generation_attempts):
         sentence: str | None = MARKOV_MODEL.make_sentence(max_words=(syllable_count * 3))
         if not sentence:
             continue
+
         words: list[str] = sentence.split()
+
         while words and syllables.get_line_syllables(" ".join(words)) > syllable_count:
             words.pop()
-        line_candidate: str = " ".join(words)
-        if syllables.get_line_syllables(line_candidate) == syllable_count:
-            if config.spell_check:
-                return make_proper_sentence(line_candidate)
-            else:
-                return line_candidate
-    return "Error generating this line."
+
+        if not words:
+            continue
+
+        line_candidate: str = make_proper_sentence(" ".join(words))
+
+        # Make sure the processed line isn't empty and has the right syllable count
+        if line_candidate and syllables.get_line_syllables(line_candidate) == syllable_count:
+            return line_candidate
+    return ''
 
 
 def make_proper_sentence(text: str) -> str:
-    text = text.strip()  # strip string
+    text = text.strip()
+
+    if not text:
+        return ""
 
     text = correct_typos.correct(text)
 
@@ -50,35 +73,3 @@ def make_proper_sentence(text: str) -> str:
     text = text.replace(' :', ':')  # Remove space before colon
 
     return text  # Return proper sentence
-
-
-def print_with_border(lines: list[str]) -> None:
-    lines = [line.strip() for line in lines]
-
-    if not lines:
-        return
-
-    leftspacing: str = " " * 5
-    topspacing: str = "\n" * 2
-
-    haiku_ready: str = "Your haiku is ready!"
-
-    # max_len: int = max(len(line) for line in lines)
-    max_len: int = max(
-        len(line) for line in lines + [haiku_ready]
-    )
-
-    padded_len: int = max_len + 4
-
-    BORDER_COLOR = PURPLE
-
-    bt: str = leftspacing + f"{BORDER_COLOR}╔" + "═" * (max_len + 2) + f"╗{RESET}"
-    bb: str = leftspacing + f"{BORDER_COLOR}╚" + "═" * (max_len + 2) + f"╝{RESET}"
-
-    print(topspacing)
-    print(f"{leftspacing}{GREEN}{haiku_ready.center(padded_len)}{RESET}")
-    print(bt)
-    for line in lines:
-        print(f"{leftspacing}{BORDER_COLOR}║{RESET} {line.center(max_len)} {BORDER_COLOR}║{RESET}")
-    print(bb)
-    print(topspacing)

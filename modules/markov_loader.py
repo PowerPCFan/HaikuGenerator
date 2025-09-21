@@ -4,7 +4,7 @@ import json
 import pickle as pkl
 import pathlib
 
-MODEL_FILE = "model.pkl"
+MODEL_FILE = "markov_model.pkl"
 SENTENCES_FILE = "sentences.json"
 
 
@@ -34,13 +34,32 @@ def delete_markov_model() -> bool:
 
 
 def create_and_save_markov_model() -> None:
-    with open(file=SENTENCES_FILE, mode='r', encoding='utf-8') as file:
-        SENTENCES = json.load(file)
+    try:
+        with open(file=SENTENCES_FILE, mode='r', encoding='utf-8') as file:
+            SENTENCES = json.load(file)
+
+        if not SENTENCES:
+            raise ValueError(f"The file {SENTENCES_FILE} is empty or contains no valid sentences.")
+
+        if len(SENTENCES) < 10:
+            raise ValueError(f"The file {SENTENCES_FILE} contains only {len(SENTENCES)} sentences. "
+                             "You need at least 10 sentences for decent haiku generation.")
+
         MARKOV_MODEL = markovify.NewlineText("\n".join(SENTENCES))
         save_markov_model(MARKOV_MODEL)
 
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Could not find {SENTENCES_FILE}.")
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in {SENTENCES_FILE}: {e}")
+    except Exception as e:
+        raise RuntimeError(f"Error creating Markov model: {e}")
+
 
 def get_markov_model() -> markovify.NewlineText:
-    if not markov_model_is_saved():
-        create_and_save_markov_model()
-    return load_markov_model()
+    try:
+        if not markov_model_is_saved():
+            create_and_save_markov_model()
+        return load_markov_model()
+    except Exception as e:
+        raise RuntimeError(f"Error loading Markov model: {e}")
