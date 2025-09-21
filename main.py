@@ -32,6 +32,7 @@ if __name__ == "__main__":
             line = f"Generate {'a' if no_successful_runs_yet else 'another'} haiku"
             table.add_row("g", line)
             table.add_row("e", "Edit configuration (advanced)")
+            table.add_row("f", "Reset configuration to defaults")
             table.add_row("r", "Regenerate Markov model")
             table.add_row("q", "Quit")
 
@@ -39,7 +40,7 @@ if __name__ == "__main__":
             console.print(table)
             console.print()
 
-            choice = Prompt.ask("Choose an option", choices=["g", "e", "r", "q"], default="g").lower()
+            choice = Prompt.ask("Choose an option", choices=["g", "e", "f", "r", "q"], default="g").lower()
 
             if choice == 'q':
                 console.print("\n[yellow]Exiting...[/yellow]")
@@ -66,6 +67,25 @@ if __name__ == "__main__":
                     console.print("[green]Configuration updated successfully![/green]")
                 except Exception as e:
                     console.print(f"[red]Error updating configuration: {e}[/red]")
+            elif choice == 'f':
+                console.clear()
+                print_title(console, "Reset Configuration to Default")
+                confirm = Prompt.ask(
+                    "Are you sure you want to reset the configuration to default?", choices=["y", "n"], default="n"
+                ).lower()
+
+                if confirm == 'y':
+                    try:
+                        config._remove_config_file()
+                        config._create_default_config()
+                        config = config.load()
+
+                        console.clear()
+                        console.print("[green]Configuration reset to default successfully![/green]")
+                    except Exception as e:
+                        console.print(f"[red]Error resetting configuration: {e}[/red]")
+                else:
+                    console.print("[yellow]Reset cancelled.[/yellow]")
             elif choice == 'r':
                 console.clear()
                 console.print("[bold green]Regenerating Markov model...[/bold green]")

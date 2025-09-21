@@ -7,7 +7,8 @@ CONFIG_JSON = "config.json"
 DEFAULT_CONFIG = {
     "max_generation_attempts": 100,
     "advanced_spell_check": False,
-    "syllables": [5, 7, 5]
+    "syllables": [5, 7, 5],
+    "state_size": 2
 }
 
 
@@ -16,6 +17,7 @@ class Config:
     max_generation_attempts: int
     advanced_spell_check: bool
     syllables: list[int]
+    state_size: int
 
     @staticmethod
     def load(json_path="config.json") -> "Config":
@@ -52,6 +54,14 @@ class Config:
             print(f"Created new config file: {json_path}")
         except IOError as e:
             print(f"Error creating config file: {e}")
+
+    @staticmethod
+    def _remove_config_file(json_path="config.json") -> None:
+        try:
+            if os.path.exists(json_path):
+                os.remove(json_path)
+        except IOError as e:
+            print(f"Error removing config file: {e}")
 
     def save(self, json_path="config.json") -> None:
         try:

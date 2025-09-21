@@ -3,6 +3,7 @@ import os
 import json
 import pickle as pkl
 import pathlib
+from modules.global_vars import config
 
 MODEL_FILE = "markov_model.pkl"
 SENTENCES_FILE = "sentences.json"
@@ -41,11 +42,16 @@ def create_and_save_markov_model() -> None:
         if not SENTENCES:
             raise ValueError(f"The file {SENTENCES_FILE} is empty or contains no valid sentences.")
 
-        if len(SENTENCES) < 10:
-            raise ValueError(f"The file {SENTENCES_FILE} contains only {len(SENTENCES)} sentences. "
-                             "You need at least 10 sentences for decent haiku generation.")
+        corpus_size = len(SENTENCES)
+        min_sentences = 50
 
-        MARKOV_MODEL = markovify.NewlineText("\n".join(SENTENCES))
+        if corpus_size < min_sentences:
+            raise ValueError(
+                f"The file {SENTENCES_FILE} contains only {corpus_size} sentences. "
+                f"You need at least {min_sentences} sentences for decent haiku generation."
+            )
+
+        MARKOV_MODEL = markovify.NewlineText("\n".join(SENTENCES), state_size=config.state_size)
         save_markov_model(MARKOV_MODEL)
 
     except FileNotFoundError:
